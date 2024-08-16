@@ -5,7 +5,9 @@ import time
 
 ctypes.windll.shcore.SetProcessDpiAwareness(2)
 
+
 def replay(filename: str, speed: float = 1.0):
+    print("Replaying...")
     timed_input = defaultdict(lambda: [])
 
     with open(filename) as f:
@@ -18,6 +20,7 @@ def replay(filename: str, speed: float = 1.0):
             timed_input[second].append((ms, action, params))
 
     start = time.time()
+
     def wait_diff(target: float):
         curr_sec = time.time() - start
         if curr_sec < target / speed:
@@ -52,6 +55,7 @@ def replay(filename: str, speed: float = 1.0):
                         dy = 1
 
                     m.scroll(dx, dy)
+    print("Finished replaying...")
 
 
 if __name__ == '__main__':

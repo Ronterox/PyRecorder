@@ -18,10 +18,12 @@ recording = True
 moves = 0
 start = time.time()
 
+
 def timestamp() -> tuple[int, float]:
     curr_time = time.time() - start
     floor_time = floor(curr_time)
     return floor_time, curr_time - floor_time
+
 
 def on_scroll(_x: int, _y: int, dx: int, dy: int):
     global recording
@@ -30,6 +32,7 @@ def on_scroll(_x: int, _y: int, dx: int, dy: int):
     t, ms = timestamp()
     logging.info(f'{t};{ms};Scroll;{dx},{dy}')
 
+
 def on_move(x: int, y: int):
     global recording, moves
     moves += 1
@@ -37,6 +40,7 @@ def on_move(x: int, y: int):
         return
     t, ms = timestamp()
     logging.info(f'{t};{ms};Move;{int(x)},{int(y)}')
+
 
 def on_click(_x: int, _y: int, button: mouse.Button, pressed: bool):
     global recording
@@ -47,7 +51,10 @@ def on_click(_x: int, _y: int, button: mouse.Button, pressed: bool):
     t, ms = timestamp()
     logging.info(f'{t};{ms};{click};{button.name}')
 
+
 Key = keyboard.Key | keyboard.KeyCode
+
+
 def on_press(key: Key):
     global recording
     if keyboard.Key.f10 == key:
@@ -59,6 +66,7 @@ def on_press(key: Key):
     t, ms = timestamp()
     logging.info(f'{t};{ms};KeyDown;{vk};{key}')
 
+
 def on_release(key: Key):
     global recording
     if not recording:
@@ -67,6 +75,7 @@ def on_release(key: Key):
     vk = key.value.vk if isinstance(key, keyboard.Key) else key.vk
     t, ms = timestamp()
     logging.info(f'{t};{ms};KeyUp;{vk};{key}')
+
 
 mouse_thread = mouse.Listener(on_click=on_click, on_move=on_move, on_scroll=on_scroll)
 keyboard_thread = keyboard.Listener(on_press=on_press, on_release=on_release)
@@ -79,5 +88,10 @@ while recording:
 
 mouse_thread.stop()
 keyboard_thread.stop()
+
+print("Replaying in", end=' ')
+for i in range(3, 0, -1):
+    print(f"{i}", end=', ')
+    time.sleep(1)
 
 replay(filename)
