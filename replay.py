@@ -36,9 +36,6 @@ def replay(filename: str):
                     else:
                         k.press(key)
                 case 'ButtonUp' | 'ButtonDown':
-                    # x, _, y = params[0].partition(',')
-                    # m.position = (int(x), int(y))
-
                     button = mouse.Button[params[1].strip()]
                     if action == 'ButtonUp':
                         m.release(button)

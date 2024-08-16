@@ -30,14 +30,14 @@ def on_move(x: int, y: int):
     t, ms = timestamp()
     logging.info(f'{t};{ms};Move;{int(x)},{int(y)}')
 
-def on_click(x: int, y: int, button: mouse.Button, pressed: bool):
+def on_click(_x: int, _y: int, button: mouse.Button, pressed: bool):
     global recording
     if not recording:
         return
 
     click = 'ButtonDown' if pressed else 'ButtonUp'
     t, ms = timestamp()
-    logging.info(f'{t};{ms};{click};{int(x)},{int(y)};{button.name}')
+    logging.info(f'{t};{ms};{click};{button.name}')
 
 Key = keyboard.Key | keyboard.KeyCode
 def on_press(key: Key):
