@@ -5,7 +5,7 @@ import time
 
 ctypes.windll.shcore.SetProcessDpiAwareness(2)
 
-def replay(filename: str):
+def replay(filename: str, speed: float = 1.0):
     timed_input = defaultdict(lambda: [])
 
     with open(filename) as f:
@@ -20,7 +20,7 @@ def replay(filename: str):
     start = time.time()
     def wait_diff(target: float):
         curr_sec = time.time() - start
-        if curr_sec < target:
+        if curr_sec < target / speed:
             time.sleep(target - curr_sec)
 
     m, k = mouse.Controller(), keyboard.Controller()
@@ -55,4 +55,4 @@ def replay(filename: str):
 
 
 if __name__ == '__main__':
-    replay('mouse_log.txt')
+    replay('commit.steps')
