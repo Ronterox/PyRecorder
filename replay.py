@@ -36,7 +36,7 @@ def replay(filename: str):
                     else:
                         k.press(key)
                 case 'ButtonUp' | 'ButtonDown':
-                    button = mouse.Button[params[1].strip()]
+                    button = mouse.Button[params[0].strip()]
                     if action == 'ButtonUp':
                         m.release(button)
                     else:
@@ -44,6 +44,14 @@ def replay(filename: str):
                 case 'Move':
                     x, _, y = params[0].partition(',')
                     m.position = (int(x), int(y))
+                case 'Scroll':
+                    dx, _, dy = params[0].partition(',')
+                    dx, dy = int(dx), int(dy)
+
+                    if (dx, dy) == (0, 0):
+                        dy = 1
+
+                    m.scroll(dx, dy)
 
 
 if __name__ == '__main__':

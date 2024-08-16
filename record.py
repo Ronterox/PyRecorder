@@ -8,7 +8,8 @@ import time
 
 ctypes.windll.shcore.SetProcessDpiAwareness(2)
 
-filename = "mouse_log.txt"
+filename = "commit.steps"
+
 logging.basicConfig(filename=filename, filemode='w', level=logging.DEBUG, format='%(message)s')
 logging.getLogger().addHandler(logging.StreamHandler())
 
@@ -21,6 +22,13 @@ def timestamp() -> tuple[int, float]:
     curr_time = time.time() - start
     floor_time = floor(curr_time)
     return floor_time, curr_time - floor_time
+
+def on_scroll(_x: int, _y: int, dx: int, dy: int):
+    global recording
+    if not recording:
+        return
+    t, ms = timestamp()
+    logging.info(f'{t};{ms};Scroll;{dx},{dy}')
 
 def on_move(x: int, y: int):
     global recording, moves
@@ -60,7 +68,7 @@ def on_release(key: Key):
     t, ms = timestamp()
     logging.info(f'{t};{ms};KeyUp;{vk};{key}')
 
-mouse_thread = mouse.Listener(on_click=on_click, on_move=on_move)
+mouse_thread = mouse.Listener(on_click=on_click, on_move=on_move, on_scroll=on_scroll)
 keyboard_thread = keyboard.Listener(on_press=on_press, on_release=on_release)
 
 mouse_thread.start()
