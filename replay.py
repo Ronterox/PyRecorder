@@ -1,10 +1,6 @@
 from collections import defaultdict
 from pynput import mouse, keyboard
-import ctypes
 import time
-
-ctypes.windll.shcore.SetProcessDpiAwareness(2)
-
 
 def replay(filename: str, speed: float = 1.0):
     print("Replaying...")
@@ -59,4 +55,8 @@ def replay(filename: str, speed: float = 1.0):
 
 
 if __name__ == '__main__':
-    replay('commit.steps')
+    import ctypes
+
+    ctypes.windll.shcore.SetProcessDpiAwareness(2)
+
+    replay('commit.steps', 1.1)
