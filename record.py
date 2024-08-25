@@ -24,16 +24,18 @@ logging.getLogger().addHandler(logging.StreamHandler())
 
 print('Recording...')
 recording = True
+do_replay = False
 moves = 0
 start = time.time()
 
-def screenshot(name: str):
+def screenshot(_time: int, ms: float):
     global mp_queue
 
     monitor = {'top': 0, 'left': 0, 'width': width, 'height': height}
     with mss.mss() as sct:
         sct_img = sct.grab(monitor)
-        mp_queue.put((sct_img.rgb, sct_img.size, f'{directory}/{name}.png'))
+        mp_queue.put((sct_img.rgb, sct_img.size, f'{directory}/{_time}_{str(ms)[2:]}.png'))
+
 
 def save_screenshot(queue: mp.Queue):
     data = queue.get()
@@ -42,7 +44,10 @@ def save_screenshot(queue: mp.Queue):
         mss.tools.to_png(rgb, size, level=9, output=name)
         data = queue.get()
 
+
 def timestamp() -> tuple[int, float]:
+    global start
+
     curr_time = time.time() - start
     floor_time = floor(curr_time)
     return floor_time, curr_time - floor_time
@@ -63,8 +68,7 @@ def on_move(x: int, y: int):
         return
     t, ms = timestamp()
     logging.info(f'{t};{ms};Move;{int(x)},{int(y)}')
-    if moves % 15 == 0:
-        screenshot(t)
+    screenshot(t, ms)
 
 
 def on_click(_x: int, _y: int, button: mouse.Button, pressed: bool):
@@ -75,7 +79,7 @@ def on_click(_x: int, _y: int, button: mouse.Button, pressed: bool):
     click = 'ButtonDown' if pressed else 'ButtonUp'
     t, ms = timestamp()
     logging.info(f'{t};{ms};{click};{button.name}')
-    screenshot(t)
+    screenshot(t, ms)
 
 
 Key = keyboard.Key | keyboard.KeyCode
@@ -124,9 +128,10 @@ if __name__ == '__main__':
     mp_queue.put(None)
     proc.join()
 
-    print("Ctrl+C to Cancel, Replaying in", end=' ')
-    for i in range(5, 0, -1):
-        print(f"{i}", end=', ')
-        time.sleep(1)
+    if do_replay:
+        print("Ctrl+C to Cancel, Replaying in", end=' ')
+        for i in range(5, 0, -1):
+            print(f"{i}", end=', ')
+            time.sleep(1)
 
-    replay(filename)
+        replay(filename)

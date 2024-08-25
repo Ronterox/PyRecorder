@@ -59,4 +59,4 @@ if __name__ == '__main__':
 
     ctypes.windll.shcore.SetProcessDpiAwareness(2)
 
-    replay('commit.steps', 1.1)
+    replay('osu.steps', 1.1)
