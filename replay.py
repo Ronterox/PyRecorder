@@ -1,10 +1,22 @@
-from collections import defaultdict
-from pynput import mouse, keyboard
 import time
 
-def replay(filename: str, speed: float = 1.0):
-    print("Replaying...")
-    timed_input = defaultdict(lambda: [])
+from collections import defaultdict
+from pynput import mouse, keyboard
+from typing import NamedTuple
+
+type Second = int
+type MSecond = float
+type Action = 'KeyDown' | 'KeyUp' | 'ButtonDown' | 'ButtonUp' | 'Move' | 'Scroll'
+type TimedInputs = dict[Second, list[Input]]
+
+class Input(NamedTuple):
+    ms: MSecond
+    action: Action
+    params: list[str]
+
+
+def parse_file_steps(filename: str) -> TimedInputs:
+    timed_input: TimedInputs = defaultdict(lambda: [])
 
     with open(filename) as f:
         for input_line in f:
@@ -13,8 +25,14 @@ def replay(filename: str, speed: float = 1.0):
             ms = float(input_line[1])
             action: str = input_line[2]
             params: list[str] = input_line[3:]
-            timed_input[second].append((ms, action, params))
+            timed_input[second].append(Input(ms, action, params))
 
+    return timed_input
+
+def replay(filename: str, speed: float = 1.0):
+    print("Replaying...")
+
+    timed_input = parse_file_steps(filename)
     start = time.time()
 
     def wait_diff(target: float):
