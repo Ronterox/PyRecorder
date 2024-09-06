@@ -56,7 +56,8 @@ def parse_data(images_dir: str, filename: str = f'{FILENAME}.steps') -> list[Tra
     target_bytes = 2 ** round(math.log2(max_bytes))
     for i in range(len(data)):
         b = data[i].bytes
-        data[i]._replace(bytes=np.pad(b, (0, target_bytes - b.size)))
+        data[i] = data[i]._replace(bytes=np.pad(b, (0, target_bytes - b.size)))
+        print(f"Padding {i+1}/{len(data)}")
 
     return data
 
