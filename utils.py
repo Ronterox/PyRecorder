@@ -15,6 +15,7 @@ def time_import(name: str):
     print(f"""Time elapsed to import {name}: {import_time}""")
     total_import_time += import_time
 
+
 time_import('numpy')
 import numpy as np
 
@@ -55,20 +56,19 @@ def parse_params(params: list[str]) -> int | list[int]:
 
 
 @timeit
-def read_and_parse(filename: str) -> tuple[np.ndarray, np.ndarray]:
+def read_and_parse(filename: str, down_sample: int = 1) -> tuple[np.ndarray, np.ndarray]:
     check_path_exists(f'{filename}.pkl', f"File '{filename}.pkl' does not exist!")
 
     dtype = np.float32
 
     df: pd.DataFrame = pd.read_pickle(f'{filename}.pkl')
-    df = df[['bytes', 'action', 'params']]
-    df.bytes = df.bytes.apply(lambda x: x.astype(dtype))
+    df = df[['rgb', 'action', 'params']]
+    df.rgb = df.rgb.apply(lambda x: x[::down_sample, ::down_sample].astype(dtype))
     df.action = df.action.map({'Move': 1, 'ButtonUp': 2, 'ButtonDown': 3})
     df.params = df.params.map(parse_params).where(df.action == 1).ffill()
-    df['output'] = df.apply(lambda row: np.array(row.params + [row.action], dtype), axis=1)
-    # df['output'] = df.apply(lambda row: np.array(row.params, dtype), axis=1)
+    df['output'] = df.apply(lambda row: np.array([int(x) // down_sample for x in row.params] + [row.action], dtype), axis=1)
 
-    return np.stack(df.bytes), np.stack(df.output)
+    return np.stack(df.rgb), np.stack(df.output)
 
 
 def print_computation_times():
