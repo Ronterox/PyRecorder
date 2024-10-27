@@ -3,6 +3,9 @@ from utils import time_import, timeit, check_path_exists, print_computation_time
 time_import('numpy')
 import numpy as np
 
+time_import('pandas')
+import pandas as pd
+
 time_import('os')
 import os
 
@@ -54,14 +57,11 @@ def process_data(data_list: list[TrainData]):
     return df
 
 if __name__ == '__main__':
-    filename = 'osu'
+    FILENAME = 'osu'
 
-    train_data_raw = parse_data('screenshots', f'{filename}.steps')
-
-    time_import('pandas')
-    import pandas as pd
+    train_data_raw = parse_data('screenshots', f'{FILENAME}.steps')
 
     train_df = process_data(train_data_raw)
-    train_df.to_pickle(f'{filename}.pkl')
+    train_df.to_pickle(f'{FILENAME}.pkl')
 
     print_computation_times()
